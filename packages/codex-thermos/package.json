@@ -7,10 +7,10 @@
 	"author": {
 		"name": "Thinkscape"
 	},
-	"homepage": "https://github.com/thinkscape/agent-thermos#readme",
+	"homepage": "https://github.com/Thinkscape/agent-thermos#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/thinkscape/agent-thermos.git",
+		"url": "git+https://github.com/Thinkscape/agent-thermos.git",
 		"directory": "packages/codex-thermos"
 	},
 	"keywords": [
