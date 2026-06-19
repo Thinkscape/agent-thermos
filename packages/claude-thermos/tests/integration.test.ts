@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -34,10 +34,27 @@ describe("@thinkscape/claude-thermos integration", () => {
 			});
 			expect(result.exitCode).toBe(0);
 			const shim = readFileSync(join(dir, ".claude/commands/thermos.md"), "utf8");
-			expect(shim).toContain("Usage: `/thermos");
-			expect(shim).toContain("thermos:thermo-nuclear-code-quality-review-subagent");
+			expect(shim).toBe(readFileSync(join(root, "commands/thermos.md"), "utf8"));
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	test("rejects install-command options without values before writing", () => {
+		for (const args of [["--cwd"], ["--scope"], ["--cwd", "--dry-run"]]) {
+			const dir = mkdtempSync(join(tmpdir(), "claude-thermos-invalid-"));
+			try {
+				const result = Bun.spawnSync({
+					cmd: ["node", join(root, "bin/claude-thermos.js"), "install-command", ...args],
+					cwd: dir,
+					stdout: "pipe",
+					stderr: "pipe",
+				});
+				expect(result.exitCode).not.toBe(0);
+				expect(existsSync(join(dir, ".claude"))).toBe(false);
+			} finally {
+				rmSync(dir, { recursive: true, force: true });
+			}
 		}
 	});
 });

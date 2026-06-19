@@ -7,7 +7,15 @@ const packages = [
 	{
 		name: "@thinkscape/codex-thermos",
 		dir: "packages/codex-thermos",
-		required: ["package.json", "README.md", ".codex-plugin/plugin.json", "skills/thermos/SKILL.md", "assets/logo.png"],
+		required: [
+			"package.json",
+			"README.md",
+			".codex-plugin/plugin.json",
+			"skills/thermos/SKILL.md",
+			"skills/thermo-nuclear-review/SKILL.md",
+			"skills/thermo-nuclear-code-quality-review/SKILL.md",
+			"assets/logo.png",
+		],
 	},
 	{
 		name: "@thinkscape/claude-thermos",
@@ -17,14 +25,25 @@ const packages = [
 			"README.md",
 			".claude-plugin/plugin.json",
 			"commands/run.md",
+			"commands/thermos.md",
 			"bin/claude-thermos.js",
+			"skills/thermo-nuclear-review/SKILL.md",
+			"skills/thermo-nuclear-code-quality-review/SKILL.md",
 			"assets/logo.png",
 		],
 	},
 	{
 		name: "@thinkscape/pi-thermos",
 		dir: "packages/pi-thermos",
-		required: ["package.json", "README.md", "src/providers.ts", "bin/pi-thermos.js", "assets/logo.png"],
+		required: [
+			"package.json",
+			"README.md",
+			"src/providers.ts",
+			"bin/pi-thermos.js",
+			"skills/thermo-nuclear-review/SKILL.md",
+			"skills/thermo-nuclear-code-quality-review/SKILL.md",
+			"assets/logo.png",
+		],
 	},
 ];
 

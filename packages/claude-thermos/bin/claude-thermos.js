@@ -1,25 +1,11 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const command = `---
-description: Run deep correctness/security and strict code-quality reviews of the current branch.
-argument-hint: [base-ref | PR URL | scope]
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git show:*), Bash(git rev-parse:*), Bash(gh pr view:*), Bash(glab mr view:*)
----
-
-# Thermos
-
-Usage: \`/thermos [base-ref | PR URL | scope]\`
-
-Run the Thermos double review workflow. Prefer the installed plugin agents:
-
-- \`thermos:thermo-nuclear-review-subagent\`
-- \`thermos:thermo-nuclear-code-quality-review-subagent\`
-
-Gather \`git diff <base>...HEAD\`, changed-file paths, and relevant file contents. Launch both agents in parallel with the same labeled context, then synthesize prioritized, deduped findings.
-`;
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const command = readFileSync(resolve(packageRoot, "commands", "thermos.md"), "utf8");
 
 function usage() {
 	console.log(`claude-thermos
@@ -45,12 +31,22 @@ let scope = "project";
 let cwd = process.cwd();
 let dryRun = false;
 
+function readOptionValue(args, index, flag) {
+	const value = args[index + 1];
+	if (!value || value.startsWith("--")) {
+		throw new Error(`${flag} requires a value`);
+	}
+	return value;
+}
+
 for (let i = 1; i < args.length; i++) {
 	const arg = args[i];
 	if (arg === "--scope") {
-		scope = args[++i] ?? scope;
+		scope = readOptionValue(args, i, arg);
+		i++;
 	} else if (arg === "--cwd") {
-		cwd = resolve(args[++i] ?? cwd);
+		cwd = resolve(readOptionValue(args, i, arg));
+		i++;
 	} else if (arg === "--dry-run") {
 		dryRun = true;
 	} else {

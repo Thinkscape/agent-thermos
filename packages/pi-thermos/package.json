@@ -1,6 +1,6 @@
 {
 	"name": "@thinkscape/pi-thermos",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Thermos plugin for Pi with provider detection for pi-subagents implementations.",
 	"type": "module",
 	"license": "MIT",
@@ -27,6 +27,7 @@
 		"agents",
 		"assets",
 		"bin",
+		"skills",
 		"src",
 		"README.md"
 	],

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { buildThermosPayload, detectPiSubagentsProvider } from "../src/providers.ts";
@@ -60,6 +60,24 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 			expect(agent).toContain("max_turns: 20");
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	test("rejects install-agents options without values before writing", () => {
+		for (const args of [["--cwd"], ["--scope"], ["--provider"], ["--provider", "--dry-run"]]) {
+			const dir = mkdtempSync(join(tmpdir(), "pi-thermos-invalid-"));
+			try {
+				const result = Bun.spawnSync({
+					cmd: ["node", join(root, "bin/pi-thermos.js"), "install-agents", ...args],
+					cwd: dir,
+					stdout: "pipe",
+					stderr: "pipe",
+				});
+				expect(result.exitCode).not.toBe(0);
+				expect(existsSync(join(dir, ".pi"))).toBe(false);
+			} finally {
+				rmSync(dir, { recursive: true, force: true });
+			}
 		}
 	});
 });

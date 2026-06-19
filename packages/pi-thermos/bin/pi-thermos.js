@@ -33,12 +33,26 @@ let provider = "auto";
 let cwd = process.cwd();
 let dryRun = false;
 
+function readOptionValue(args, index, flag) {
+	const value = args[index + 1];
+	if (!value || value.startsWith("--")) {
+		throw new Error(`${flag} requires a value`);
+	}
+	return value;
+}
+
 for (let i = 1; i < args.length; i++) {
 	const arg = args[i];
-	if (arg === "--scope") scope = args[++i] ?? scope;
-	else if (arg === "--provider") provider = args[++i] ?? provider;
-	else if (arg === "--cwd") cwd = resolve(args[++i] ?? cwd);
-	else if (arg === "--dry-run") dryRun = true;
+	if (arg === "--scope") {
+		scope = readOptionValue(args, i, arg);
+		i++;
+	} else if (arg === "--provider") {
+		provider = readOptionValue(args, i, arg);
+		i++;
+	} else if (arg === "--cwd") {
+		cwd = resolve(readOptionValue(args, i, arg));
+		i++;
+	} else if (arg === "--dry-run") dryRun = true;
 	else throw new Error(`Unknown argument: ${arg}`);
 }
 
