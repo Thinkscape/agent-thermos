@@ -26,13 +26,20 @@ function expectGeneratedFile(path: string, expected: string) {
 	expect(read(path).trimEnd()).toBe(expected.trimEnd());
 }
 
+function packageVersion(path: string): string {
+	const pkg = JSON.parse(read(path)) as { version: string };
+	return pkg.version;
+}
+
 describe("generated package files", () => {
 	test("Codex package exposes thermos plugin and $thermos skill", () => {
 		const manifest = JSON.parse(read("packages/codex-thermos/.codex-plugin/plugin.json")) as {
 			name: string;
+			version: string;
 			interface: { displayName: string; logo: string };
 		};
 		expect(manifest.name).toBe("thermos");
+		expect(manifest.version).toBe(packageVersion("packages/codex-thermos/package.json"));
 		expect(manifest.interface.displayName).toBe("Thermos");
 		expect(manifest.interface.logo).toBe("./assets/logo.png");
 		expectGeneratedFile("packages/codex-thermos/skills/thermos/SKILL.md", renderCodexThermosSkill());
@@ -41,10 +48,12 @@ describe("generated package files", () => {
 	test("Claude package exposes thermos plugin, run command, and agents", () => {
 		const manifest = JSON.parse(read("packages/claude-thermos/.claude-plugin/plugin.json")) as {
 			name: string;
+			version: string;
 			commands: string[];
 			agents: string[];
 		};
 		expect(manifest.name).toBe("thermos");
+		expect(manifest.version).toBe(packageVersion("packages/claude-thermos/package.json"));
 		expect(manifest.commands).toContain("./commands/run.md");
 		expect(manifest.agents).toContain("./agents/thermo-nuclear-review-subagent.md");
 		expect(manifest.agents).toContain("./agents/thermo-nuclear-code-quality-review-subagent.md");
