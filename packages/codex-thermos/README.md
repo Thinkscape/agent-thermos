@@ -10,15 +10,25 @@ Adapted from Cursor's MIT-licensed
 
 ## Installation
 
-This package is a Codex plugin whose plugin id is `thermos` and display name is
-**Thermos**. Add the repository marketplace, install the plugin, then start a new
-thread:
+Install the published Thermos plugin through Codex's plugin marketplace flow:
 
 ```bash
-codex plugin marketplace add ./path/to/agent-thermos
+codex plugin marketplace add Thinkscape/agent-thermos
+codex plugin add thermos@agent-thermos
 ```
 
-The repo marketplace entry lives at `.agents/plugins/marketplace.json`.
+The marketplace entry is in the repository at
+[`/.agents/plugins/marketplace.json`](../../.agents/plugins/marketplace.json).
+The npm package entry is
+[`@thinkscape/codex-thermos`](https://www.npmjs.com/package/@thinkscape/codex-thermos).
+
+To update an existing install after a release:
+
+```bash
+codex plugin marketplace upgrade agent-thermos
+codex plugin remove thermos@agent-thermos
+codex plugin add thermos@agent-thermos
+```
 
 ## Primary invocation
 

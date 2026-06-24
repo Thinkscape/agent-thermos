@@ -15,12 +15,15 @@ proposition of the upstream plugin while adapting it to multiple agent hosts.
 
 ## Packages
 
-| Package | Host | Primary invocation |
-|:--|:--|:--|
-| `@thinkscape/codex-thermos` | OpenAI Codex | `$thermos` |
-| `@thinkscape/claude-thermos` | Claude Code | `/thermos:run` or optional `/thermos` shim |
-| `@thinkscape/pi-thermos` | Pi | provider-specific subagent orchestration |
-| `@thinkscape/thermos-core` | internal | shared prompts, rubrics, templates, and docs |
+Choose the package for your agent host. Each package README is written for
+installing the published plugin or extension, not for working from a local clone.
+
+| Host | Package README | Registry entries | Primary invocation |
+|:--|:--|:--|:--|
+| OpenAI Codex | [`@thinkscape/codex-thermos`](./packages/codex-thermos/README.md) | [Codex marketplace entry](./.agents/plugins/marketplace.json), [npm](https://www.npmjs.com/package/@thinkscape/codex-thermos) | `$thermos` |
+| Claude Code | [`@thinkscape/claude-thermos`](./packages/claude-thermos/README.md) | [Claude marketplace entry](./.claude-plugin/marketplace.json), [npm](https://www.npmjs.com/package/@thinkscape/claude-thermos) | `/thermos:run`, or optional `/thermos` shim |
+| Pi | [`@thinkscape/pi-thermos`](./packages/pi-thermos/README.md) | [Pi package catalog](https://pi.dev/packages/@thinkscape/pi-thermos), [npm](https://www.npmjs.com/package/@thinkscape/pi-thermos) | `thermos` command in Pi |
+| Shared internals | [`@thinkscape/thermos-core`](./packages/core/package.json) | private workspace package | shared prompts, rubrics, templates, and generated package assets |
 
 ## Architecture
 

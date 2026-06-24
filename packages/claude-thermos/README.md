@@ -10,14 +10,26 @@ Adapted from Cursor's MIT-licensed
 
 ## Installation
 
-Install or link the package, then load the plugin root with Claude Code:
+Install the published Thermos plugin through Claude Code's plugin marketplace
+flow:
 
 ```bash
-claude --plugin-dir ./packages/claude-thermos
+claude plugin marketplace add Thinkscape/agent-thermos
+claude plugin install thermos@agent-thermos
 ```
 
-The npm package is named `@thinkscape/claude-thermos`, but the Claude plugin
-manifest is named `thermos`. That keeps plugin commands short.
+Inside an interactive Claude Code session, the equivalent slash commands are:
+
+```text
+/plugin marketplace add Thinkscape/agent-thermos
+/plugin install thermos@agent-thermos
+```
+
+The Claude marketplace entry is
+[`/.claude-plugin/marketplace.json`](../../.claude-plugin/marketplace.json) and
+installs the published npm package
+[`@thinkscape/claude-thermos`](https://www.npmjs.com/package/@thinkscape/claude-thermos).
+The plugin manifest is named `thermos` so commands stay short.
 
 ## Primary invocation
 
@@ -28,6 +40,7 @@ manifest is named `thermos`. That keeps plugin commands short.
 For an unprefixed command, install the optional standalone shim:
 
 ```bash
+npm install -g @thinkscape/claude-thermos
 claude-thermos install-command --scope project
 ```
 

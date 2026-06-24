@@ -156,8 +156,16 @@ ${upstreamCredit}
 
 ## Install
 
-${host === "codex" ? "Install the `thermos` Codex plugin from this repository's Codex marketplace entry." : ""}
-${host === "claude" ? "Install the Claude plugin package, then load it through Claude Code's plugin system." : ""}
+${
+	host === "codex"
+		? "Install with `codex plugin marketplace add Thinkscape/agent-thermos`, then `codex plugin add thermos@agent-thermos`."
+		: ""
+}
+${
+	host === "claude"
+		? "Install with `claude plugin marketplace add Thinkscape/agent-thermos`, then `claude plugin install thermos@agent-thermos`."
+		: ""
+}
 ${host === "pi" ? "Install with `pi install npm:@thinkscape/pi-thermos`." : ""}
 
 ## Primary invocation

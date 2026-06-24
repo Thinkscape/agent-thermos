@@ -14,7 +14,23 @@ Adapted from Cursor's MIT-licensed
 pi install npm:@thinkscape/pi-thermos
 ```
 
-Thermos supports these Pi subagent packages:
+The package is published as
+[`@thinkscape/pi-thermos`](https://www.npmjs.com/package/@thinkscape/pi-thermos)
+and is listed in the
+[Pi package catalog](https://pi.dev/packages/@thinkscape/pi-thermos).
+
+Thermos orchestrates review work through a Pi subagent provider. Install the
+provider you use in Pi:
+
+```bash
+pi install npm:pi-subagents
+# or
+pi install npm:@gotgenes/pi-subagents
+# or
+pi install npm:@tintinweb/pi-subagents
+```
+
+Supported providers:
 
 | Provider | Package | Tool shape |
 |:--|:--|:--|
@@ -24,17 +40,23 @@ Thermos supports these Pi subagent packages:
 
 ## Install agent definitions
 
+After installing the package in Pi, install the matching Thermos agent
+definitions into your project or user agent directory:
+
 ```bash
 pi-thermos install-agents --scope project --provider auto
 ```
 
-`auto` installs Nico-compatible definitions by default because Nico's package has
-the broadest project/user agent frontmatter. You can select a provider explicitly:
+`auto` installs Nico-compatible definitions by default. Select a provider
+explicitly when your Pi setup uses another subagent package:
 
 ```bash
 pi-thermos install-agents --scope project --provider gotgenes
 pi-thermos install-agents --scope user --provider tintinweb
 ```
+
+After installation, run Pi and invoke the `thermos` command with a base ref, PR
+URL, or file scope.
 
 ## Architecture
 

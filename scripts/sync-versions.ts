@@ -14,6 +14,11 @@ const manifests = [
 	},
 ];
 
+const claudeMarketplace = {
+	packageJson: "packages/claude-thermos/package.json",
+	manifest: ".claude-plugin/marketplace.json",
+};
+
 for (const { packageJson, manifest } of manifests) {
 	const pkg = JSON.parse(readFileSync(join(root, packageJson), "utf8")) as { version?: string };
 	if (!pkg.version) throw new Error(`${packageJson} is missing version`);
@@ -27,4 +32,22 @@ for (const { packageJson, manifest } of manifests) {
 	writeFileSync(manifestPath, updated);
 }
 
-console.log(`Synced ${manifests.length} plugin manifest versions from package.json.`);
+{
+	const pkg = JSON.parse(readFileSync(join(root, claudeMarketplace.packageJson), "utf8")) as { version?: string };
+	if (!pkg.version) throw new Error(`${claudeMarketplace.packageJson} is missing version`);
+
+	const manifestPath = join(root, claudeMarketplace.manifest);
+	const source = readFileSync(manifestPath, "utf8");
+	const marketplace = JSON.parse(source) as {
+		plugins?: Array<{ name?: string; version?: string }>;
+	};
+	const plugin = marketplace.plugins?.find((entry) => entry.name === "thermos");
+	if (!plugin) throw new Error(`${claudeMarketplace.manifest} is missing thermos plugin entry`);
+	const updated = source.replace(/("name":\s*"thermos"[\s\S]*?"version":\s*")[^"]+(")/, `$1${pkg.version}$2`);
+	if (updated === source && plugin.version !== pkg.version) {
+		throw new Error(`${claudeMarketplace.manifest} is missing thermos plugin version field`);
+	}
+	writeFileSync(manifestPath, updated);
+}
+
+console.log(`Synced ${manifests.length + 1} plugin manifest versions from package.json.`);

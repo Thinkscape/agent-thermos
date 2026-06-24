@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
+const repoRoot = resolve(import.meta.dir, "../../..");
 
 describe("@thinkscape/claude-thermos integration", () => {
 	test("has a valid Claude plugin manifest", () => {
@@ -15,6 +16,20 @@ describe("@thinkscape/claude-thermos integration", () => {
 		expect(manifest.name).toBe("thermos");
 		expect(manifest.commands).toContain("./commands/run.md");
 		expect(manifest.agents).toContain("./agents/thermo-nuclear-review-subagent.md");
+	});
+
+	test("is listed in the repo Claude marketplace", () => {
+		const marketplace = JSON.parse(readFileSync(join(repoRoot, ".claude-plugin/marketplace.json"), "utf8")) as {
+			name: string;
+			plugins: Array<{ name: string; version: string; source: { source: string; package: string } }>;
+		};
+		const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as { version: string };
+		const entry = marketplace.plugins.find((plugin) => plugin.name === "thermos");
+
+		expect(marketplace.name).toBe("agent-thermos");
+		expect(entry?.version).toBe(pkg.version);
+		expect(entry?.source.source).toBe("npm");
+		expect(entry?.source.package).toBe("@thinkscape/claude-thermos");
 	});
 
 	test("run command is concise and points to thermos agents", () => {
