@@ -29,7 +29,7 @@
 		"assets",
 		"bin",
 		"commands",
-		"skills",
+		"shims",
 		"README.md"
 	],
 	"scripts": {

@@ -5,7 +5,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const command = readFileSync(resolve(packageRoot, "commands", "thermos.md"), "utf8");
+const command = readFileSync(resolve(packageRoot, "shims", "thermos.md"), "utf8");
 
 function usage() {
 	console.log(`claude-thermos

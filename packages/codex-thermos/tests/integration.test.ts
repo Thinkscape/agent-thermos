@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
@@ -19,11 +19,26 @@ describe("@thinkscape/codex-thermos integration", () => {
 		expect(existsSync(join(root, manifest.interface.composerIcon))).toBe(true);
 	});
 
-	test("exposes $thermos skill", () => {
+	test("exposes only $thermos as a user-selectable skill", () => {
+		const selectableSkills = readdirSync(join(root, "skills"), { withFileTypes: true })
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => entry.name)
+			.sort();
 		const skill = readFileSync(join(root, "skills/thermos/SKILL.md"), "utf8");
 		const metadata = readFileSync(join(root, "skills/thermos/agents/openai.yaml"), "utf8");
+
+		expect(selectableSkills).toEqual(["thermos"]);
 		expect(skill).toContain("name: thermos");
 		expect(skill).toContain("$thermos");
+		expect(skill).toContain(
+			"`thermo-nuclear-review-subagent` for bugs, breakages, security, devex regressions, feature-flag leaks, and other branch-audit risks. Use `references/thermo-nuclear-review.md` as its rubric.",
+		);
+		expect(skill).toContain(
+			"`thermo-nuclear-code-quality-review-subagent` for maintainability, structure, file-size growth, spaghetti, abstractions, and codebase-health risks. Use `references/thermo-nuclear-code-quality-review.md` as its rubric.",
+		);
+		expect(skill).not.toContain("Before launching review passes");
+		expect(existsSync(join(root, "skills/thermos/references/thermo-nuclear-review.md"))).toBe(true);
+		expect(existsSync(join(root, "skills/thermos/references/thermo-nuclear-code-quality-review.md"))).toBe(true);
 		expect(metadata).toContain("allow_implicit_invocation");
 	});
 

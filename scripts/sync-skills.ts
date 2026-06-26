@@ -1,18 +1,24 @@
-import { copyFileSync, mkdirSync } from "node:fs";
+import { copyFileSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
 
 const sharedSkills = ["thermo-nuclear-review", "thermo-nuclear-code-quality-review"];
-const packageDirs = ["packages/codex-thermos", "packages/claude-thermos", "packages/pi-thermos"];
+const codexPackageDir = "packages/codex-thermos";
+const piPackageDir = "packages/pi-thermos";
 
-for (const pkg of packageDirs) {
-	for (const skill of sharedSkills) {
-		const source = join(root, "packages/core/skills", skill, "SKILL.md");
-		const target = join(root, pkg, "skills", skill, "SKILL.md");
-		mkdirSync(dirname(target), { recursive: true });
-		copyFileSync(source, target);
-	}
+for (const skill of sharedSkills) {
+	const source = join(root, "packages/core/skills", skill, "SKILL.md");
+	const piTarget = join(root, piPackageDir, "skills", skill, "SKILL.md");
+	const codexReferenceTarget = join(root, codexPackageDir, "skills", "thermos", "references", `${skill}.md`);
+
+	mkdirSync(dirname(piTarget), { recursive: true });
+	copyFileSync(source, piTarget);
+
+	mkdirSync(dirname(codexReferenceTarget), { recursive: true });
+	copyFileSync(source, codexReferenceTarget);
+
+	rmSync(join(root, codexPackageDir, "skills", skill), { recursive: true, force: true });
 }
 
-console.log(`Synced ${sharedSkills.length} shared skills into ${packageDirs.length} packages.`);
+console.log(`Synced ${sharedSkills.length} shared skills into Pi skills and Codex Thermos references.`);

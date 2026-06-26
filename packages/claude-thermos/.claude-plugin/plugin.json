@@ -12,6 +12,5 @@
 	"license": "MIT",
 	"keywords": ["thermos", "code-review", "subagents", "security-review", "code-quality"],
 	"commands": ["./commands/run.md"],
-	"agents": ["./agents/thermo-nuclear-review-subagent.md", "./agents/thermo-nuclear-code-quality-review-subagent.md"],
-	"skills": "./skills/"
+	"agents": ["./agents/thermo-nuclear-review-subagent.md", "./agents/thermo-nuclear-code-quality-review-subagent.md"]
 }

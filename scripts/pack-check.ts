@@ -1,4 +1,4 @@
-import { accessSync, readFileSync } from "node:fs";
+import { accessSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
@@ -12,10 +12,11 @@ const packages = [
 			"README.md",
 			".codex-plugin/plugin.json",
 			"skills/thermos/SKILL.md",
-			"skills/thermo-nuclear-review/SKILL.md",
-			"skills/thermo-nuclear-code-quality-review/SKILL.md",
+			"skills/thermos/references/thermo-nuclear-review.md",
+			"skills/thermos/references/thermo-nuclear-code-quality-review.md",
 			"assets/logo.png",
 		],
+		forbidden: ["skills/thermo-nuclear-review", "skills/thermo-nuclear-code-quality-review"],
 	},
 	{
 		name: "@thinkscape/claude-thermos",
@@ -25,12 +26,11 @@ const packages = [
 			"README.md",
 			".claude-plugin/plugin.json",
 			"commands/run.md",
-			"commands/thermos.md",
+			"shims/thermos.md",
 			"bin/claude-thermos.js",
-			"skills/thermo-nuclear-review/SKILL.md",
-			"skills/thermo-nuclear-code-quality-review/SKILL.md",
 			"assets/logo.png",
 		],
+		forbidden: [],
 	},
 	{
 		name: "@thinkscape/pi-thermos",
@@ -44,6 +44,7 @@ const packages = [
 			"skills/thermo-nuclear-code-quality-review/SKILL.md",
 			"assets/logo.png",
 		],
+		forbidden: [],
 	},
 ];
 
@@ -55,6 +56,12 @@ for (const pkg of packages) {
 
 	for (const file of pkg.required) {
 		accessSync(join(root, pkg.dir, file));
+	}
+
+	for (const file of pkg.forbidden) {
+		if (existsSync(join(root, pkg.dir, file))) {
+			throw new Error(`${pkg.dir}/${file} must not be included in the package`);
+		}
 	}
 }
 

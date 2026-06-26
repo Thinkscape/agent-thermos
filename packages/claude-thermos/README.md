@@ -30,6 +30,8 @@ The Claude marketplace entry is
 installs the published npm package
 [`@thinkscape/claude-thermos`](https://www.npmjs.com/package/@thinkscape/claude-thermos).
 The plugin manifest is named `thermos` so commands stay short.
+The installed plugin exposes `/thermos:run`; the individual review rubrics are
+embedded in the bundled subagents and are not user-facing slash commands.
 
 ## Primary invocation
 
@@ -49,6 +51,10 @@ Then use:
 ```text
 /thermos [base-ref | PR URL | scope]
 ```
+
+The shim is copied into `.claude/commands/thermos.md`, so it appears as the
+normal unprefixed `/thermos` command without adding another plugin-scoped
+`/thermos:*` entry.
 
 ## Architecture
 

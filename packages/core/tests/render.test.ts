@@ -13,6 +13,13 @@ describe("renderers", () => {
 		expect(skill).toContain("name: thermos");
 		expect(skill).toContain("$thermos");
 		expect(skill).toContain("thermo-nuclear-review-subagent");
+		expect(skill).toContain(
+			"`thermo-nuclear-review-subagent` for bugs, breakages, security, devex regressions, feature-flag leaks, and other branch-audit risks. Use `references/thermo-nuclear-review.md` as its rubric.",
+		);
+		expect(skill).toContain(
+			"`thermo-nuclear-code-quality-review-subagent` for maintainability, structure, file-size growth, spaghetti, abstractions, and codebase-health risks. Use `references/thermo-nuclear-code-quality-review.md` as its rubric.",
+		);
+		expect(skill).not.toContain("Before launching review passes");
 	});
 
 	test("renders Claude plugin command and shim variants", () => {

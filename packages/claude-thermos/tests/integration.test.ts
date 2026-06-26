@@ -12,9 +12,11 @@ describe("@thinkscape/claude-thermos integration", () => {
 			name: string;
 			commands: string[];
 			agents: string[];
+			skills?: string;
 		};
 		expect(manifest.name).toBe("thermos");
 		expect(manifest.commands).toContain("./commands/run.md");
+		expect(manifest.skills).toBeUndefined();
 		expect(manifest.agents).toContain("./agents/thermo-nuclear-review-subagent.md");
 	});
 
@@ -37,6 +39,8 @@ describe("@thinkscape/claude-thermos integration", () => {
 		expect(command).toContain("description: Run deep correctness/security");
 		expect(command).toContain("Usage: `/thermos:run");
 		expect(command).toContain("thermos:thermo-nuclear-review-subagent");
+		expect(existsSync(join(root, "commands/thermos.md"))).toBe(false);
+		expect(existsSync(join(root, "skills"))).toBe(false);
 	});
 
 	test("installs standalone /thermos shim without API keys", () => {
@@ -49,7 +53,7 @@ describe("@thinkscape/claude-thermos integration", () => {
 			});
 			expect(result.exitCode).toBe(0);
 			const shim = readFileSync(join(dir, ".claude/commands/thermos.md"), "utf8");
-			expect(shim).toBe(readFileSync(join(root, "commands/thermos.md"), "utf8"));
+			expect(shim).toBe(readFileSync(join(root, "shims/thermos.md"), "utf8"));
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
