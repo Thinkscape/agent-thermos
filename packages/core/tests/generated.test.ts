@@ -82,9 +82,9 @@ describe("generated package files", () => {
 	test("host packages copy shared rubric content from core", () => {
 		for (const skill of sharedSkills) {
 			const expected = read(`packages/core/skills/${skill}/SKILL.md`);
-			expectGeneratedFile(`packages/pi-thermos/skills/${skill}/SKILL.md`, expected);
 			expectGeneratedFile(`packages/codex-thermos/skills/thermos/references/${skill}.md`, expected);
 		}
+		expect(existsSync(join(root, "packages/pi-thermos/skills"))).toBe(false);
 	});
 
 	test("asset references point to committed files", () => {

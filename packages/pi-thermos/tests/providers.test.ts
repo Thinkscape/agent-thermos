@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { buildThermosPayload, detectPiSubagentsProvider } from "../src/providers.ts";
+import thermosExtension, { buildThermosPayload, buildThermosPrompt, detectPiSubagentsProvider } from "../src/index.ts";
 
 const root = resolve(import.meta.dir, "..");
 
@@ -35,6 +35,45 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 		expect(buildThermosPayload("nico", "main").calls[0]?.args).toHaveProperty("tasks");
 		expect(buildThermosPayload("gotgenes", "main").calls[0]?.tool).toBe("subagent");
 		expect(buildThermosPayload("tintinweb", "main").calls[0]?.tool).toBe("Agent");
+	});
+
+	test("registers a valid Pi slash command and submits a provider-aware prompt", async () => {
+		let registered:
+			| {
+					name: string;
+					command: {
+						description?: string;
+						handler: (args?: string) => Promise<void> | void;
+					};
+			  }
+			| undefined;
+		const messages: string[] = [];
+
+		thermosExtension({
+			getAllTools: () => [{ name: "subagent", parameters: { properties: { tasks: {}, chain: {} } } }],
+			registerCommand: (name, command) => {
+				registered = { name, command };
+			},
+			sendUserMessage: (content) => {
+				messages.push(content);
+			},
+		});
+
+		expect(registered?.name).toBe("thermos");
+		expect(registered?.command.description).toContain("code-quality reviews");
+
+		await registered?.command.handler("main");
+
+		expect(messages).toHaveLength(1);
+		expect(messages[0]).toContain("Use the nico Pi subagent provider");
+		expect(messages[0]).toContain('"thermo-nuclear-review-subagent"');
+	});
+
+	test("renders Thermos prompts without exposing package skills", () => {
+		const prompt = buildThermosPrompt("gotgenes", "current branch");
+		expect(prompt).toContain("Call `subagent` with");
+		expect(prompt).toContain("thermo-nuclear-code-quality-review-subagent");
+		expect(existsSync(join(root, "skills"))).toBe(false);
 	});
 
 	test("installs project agents without API keys", () => {

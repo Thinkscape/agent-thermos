@@ -35,16 +35,8 @@ const packages = [
 	{
 		name: "@thinkscape/pi-thermos",
 		dir: "packages/pi-thermos",
-		required: [
-			"package.json",
-			"README.md",
-			"src/providers.ts",
-			"bin/pi-thermos.js",
-			"skills/thermo-nuclear-review/SKILL.md",
-			"skills/thermo-nuclear-code-quality-review/SKILL.md",
-			"assets/logo.png",
-		],
-		forbidden: [],
+		required: ["package.json", "README.md", "src/providers.ts", "bin/pi-thermos.js", "assets/logo.png"],
+		forbidden: ["skills"],
 	},
 ];
 

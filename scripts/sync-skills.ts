@@ -7,13 +7,11 @@ const sharedSkills = ["thermo-nuclear-review", "thermo-nuclear-code-quality-revi
 const codexPackageDir = "packages/codex-thermos";
 const piPackageDir = "packages/pi-thermos";
 
+rmSync(join(root, piPackageDir, "skills"), { recursive: true, force: true });
+
 for (const skill of sharedSkills) {
 	const source = join(root, "packages/core/skills", skill, "SKILL.md");
-	const piTarget = join(root, piPackageDir, "skills", skill, "SKILL.md");
 	const codexReferenceTarget = join(root, codexPackageDir, "skills", "thermos", "references", `${skill}.md`);
-
-	mkdirSync(dirname(piTarget), { recursive: true });
-	copyFileSync(source, piTarget);
 
 	mkdirSync(dirname(codexReferenceTarget), { recursive: true });
 	copyFileSync(source, codexReferenceTarget);
@@ -21,4 +19,4 @@ for (const skill of sharedSkills) {
 	rmSync(join(root, codexPackageDir, "skills", skill), { recursive: true, force: true });
 }
 
-console.log(`Synced ${sharedSkills.length} shared skills into Pi skills and Codex Thermos references.`);
+console.log(`Synced ${sharedSkills.length} shared skills into Codex Thermos references.`);
