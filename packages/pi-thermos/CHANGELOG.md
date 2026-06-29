@@ -1,5 +1,12 @@
 # @thinkscape/pi-thermos
 
+## 0.1.4
+
+### Patch Changes
+
+- 129b4a2: Restore parent workflow guidance in generated Pi Thermos prompts so sessions gather diff and changed-file context before launching provider subagents and pass the same labeled evidence sections to both agents.
+- 8c78fd1: Align the effective Thermos parent workflow across Codex, Claude, and Pi with Cursor's upstream Thermos main skill while keeping host-specific invocation and provider notes separate.
+
 ## 0.1.3
 
 ### Patch Changes
