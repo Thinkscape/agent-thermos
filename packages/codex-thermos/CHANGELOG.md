@@ -1,5 +1,11 @@
 # @thinkscape/codex-thermos
 
+## 0.1.3
+
+### Patch Changes
+
+- 32139fb: Hide internal Thermos review rubrics from the Codex slash-command skill surface by packaging them as private `$thermos` reference files.
+
 ## 0.1.2
 
 ### Patch Changes

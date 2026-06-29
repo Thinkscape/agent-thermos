@@ -1,5 +1,11 @@
 # @thinkscape/claude-thermos
 
+## 0.1.3
+
+### Patch Changes
+
+- 32139fb: Hide internal Claude Thermos skills from the plugin surface and package the short `/thermos` command only as an opt-in standalone shim.
+
 ## 0.1.2
 
 ### Patch Changes
