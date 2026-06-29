@@ -1,6 +1,6 @@
 {
 	"name": "@thinkscape/claude-thermos",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Thermos plugin for Claude Code: deep correctness/security and strict code-quality branch reviews.",
 	"type": "module",
 	"license": "MIT",
