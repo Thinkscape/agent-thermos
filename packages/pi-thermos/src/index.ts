@@ -58,7 +58,16 @@ export function buildThermosPrompt(provider: PiThermosProvider, scope: string): 
 
 ${scope}
 
-Use the ${provider} Pi subagent provider. Launch both Thermos review agents below, wait for their results, then synthesize a single prioritized review with file references and evidence.
+Use the ${provider} Pi subagent provider. Follow the parent workflow before launching review agents:
+
+1. Determine the review scope from the user request, PR, current branch, or relevant changed files.
+2. Gather the diff and any file/context excerpts needed for reviewers to evaluate the change without guessing.
+3. Put the same scoped evidence into each tool call below by replacing the placeholder sections in its prompt/task:
+   - \`### Git / diff output\`
+   - \`### Changed file contents\`
+   - \`### User scope / intent\`
+4. Launch both Thermos review agents, wait for their results, then synthesize a single prioritized review with file references and evidence.
+5. If individual background summaries are already visible to the user, do not restate them wholesale. Surface the unified verdict, the highest-signal findings, and any remaining uncertainty.
 
 ${calls}`;
 }

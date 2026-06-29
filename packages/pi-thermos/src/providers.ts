@@ -146,6 +146,14 @@ export function buildThermosPayload(provider: PiThermosProvider, prompt: string)
 function buildSharedPrompt(prompt: string): string {
 	return `Run Thermos against this scope. Return prioritized findings with file references and evidence.
 
+The parent session should populate the evidence sections before launching this agent. Review only the scoped diff and changed-file context. If placeholders remain, collect the missing context when tools allow; otherwise report that the review lacks enough evidence instead of guessing.
+
+### Git / diff output
+<paste git status, base ref, changed-file list, and relevant diff here>
+
+### Changed file contents
+<paste changed file contents or focused excerpts needed to verify findings here>
+
 ### User scope / intent
 ${prompt}`;
 }

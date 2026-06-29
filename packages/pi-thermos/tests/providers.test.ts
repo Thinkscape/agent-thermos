@@ -35,6 +35,8 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 		expect(buildThermosPayload("nico", "main").calls[0]?.args).toHaveProperty("tasks");
 		expect(buildThermosPayload("gotgenes", "main").calls[0]?.tool).toBe("subagent");
 		expect(buildThermosPayload("tintinweb", "main").calls[0]?.tool).toBe("Agent");
+		expect(JSON.stringify(buildThermosPayload("tintinweb", "main").calls)).toContain("### Git / diff output");
+		expect(JSON.stringify(buildThermosPayload("tintinweb", "main").calls)).toContain("### Changed file contents");
 	});
 
 	test("registers a valid Pi slash command and submits a provider-aware prompt", async () => {
@@ -66,12 +68,17 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 
 		expect(messages).toHaveLength(1);
 		expect(messages[0]).toContain("Use the nico Pi subagent provider");
+		expect(messages[0]).toContain("Follow the parent workflow before launching review agents");
+		expect(messages[0]).toContain("Gather the diff and any file/context excerpts");
 		expect(messages[0]).toContain('"thermo-nuclear-review-subagent"');
 	});
 
 	test("renders Thermos prompts without exposing package skills", () => {
 		const prompt = buildThermosPrompt("gotgenes", "current branch");
 		expect(prompt).toContain("Call `subagent` with");
+		expect(prompt).toContain("replacing the placeholder sections");
+		expect(prompt).toContain("### Git / diff output");
+		expect(prompt).toContain("### Changed file contents");
 		expect(prompt).toContain("thermo-nuclear-code-quality-review-subagent");
 		expect(existsSync(join(root, "skills"))).toBe(false);
 	});
