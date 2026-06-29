@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { thermosWorkflow } from "../src/content.ts";
 import {
 	renderClaudeAgent,
 	renderClaudeRunCommand,
@@ -12,19 +13,19 @@ describe("renderers", () => {
 		const skill = renderCodexThermosSkill();
 		expect(skill).toContain("name: thermos");
 		expect(skill).toContain("$thermos");
-		expect(skill).toContain("thermo-nuclear-review-subagent");
-		expect(skill).toContain(
-			"`thermo-nuclear-review-subagent` for bugs, breakages, security, devex regressions, feature-flag leaks, and other branch-audit risks. Use `references/thermo-nuclear-review.md` as its rubric.",
-		);
-		expect(skill).toContain(
-			"`thermo-nuclear-code-quality-review-subagent` for maintainability, structure, file-size growth, spaghetti, abstractions, and codebase-health risks. Use `references/thermo-nuclear-code-quality-review.md` as its rubric.",
-		);
+		expect(skill).toContain(thermosWorkflow);
+		expect(skill).toContain("The packaged rubric references are available");
 		expect(skill).not.toContain("Before launching review passes");
 	});
 
 	test("renders Claude plugin command and shim variants", () => {
-		expect(renderClaudeRunCommand()).toContain("Usage: `/thermos:run");
-		expect(renderClaudeShimCommand()).toContain("Usage: `/thermos ");
+		const runCommand = renderClaudeRunCommand();
+		const shimCommand = renderClaudeShimCommand();
+		expect(runCommand).toContain("Usage: `/thermos:run");
+		expect(shimCommand).toContain("Usage: `/thermos ");
+		expect(runCommand).toContain(thermosWorkflow);
+		expect(shimCommand).toContain(thermosWorkflow);
+		expect(runCommand).toContain("thermos:thermo-nuclear-review-subagent");
 	});
 
 	test("renders Claude agents", () => {

@@ -15,7 +15,7 @@ import {
 export function renderCodexThermosSkill(): string {
 	return `---
 name: thermos
-description: Launch both thermo-nuclear review passes, then synthesize findings. Use for $thermos, thermos, double thermo review, or combined bug/security and code-quality branch audits.
+description: "Launch both thermo-nuclear review subagents in parallel, then synthesize their findings. Use for $thermos, thermos, double thermo review, or combined bug/security and code-quality branch audits."
 disable-model-invocation: true
 ---
 
@@ -27,7 +27,9 @@ ${thermosWorkflow}
 
 ## Codex Notes
 
-Use Codex subagents or multi-agent tools when available. If the current Codex surface does not expose subagents, run the two passes sequentially in the main thread and keep the outputs clearly separated before synthesis.
+Use Codex subagents or multi-agent tools when available. If the current Codex surface does not expose background subagents, run the two passes sequentially in the main thread and keep the outputs clearly separated before synthesis.
+
+The packaged rubric references are available at \`references/thermo-nuclear-review.md\` and \`references/thermo-nuclear-code-quality-review.md\`. Give each subagent the matching rubric if the host does not automatically resolve the named subagent.
 `;
 }
 
@@ -44,20 +46,16 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git show:*), Bash(git 
 
 Usage: \`${invocation} ${usageArgumentHint}\`
 
-Run a double thermo review for the requested scope. If no scope is provided, review the current branch against \`main\`.
+${thermosWorkflow}
 
-## Method
+## Claude Notes
 
-1. Determine the base ref, PR URL, or explicit file scope from \`$ARGUMENTS\`.
-2. Gather \`git diff <base>...HEAD\`, changed-file paths, and enough file contents for reviewers to verify claims.
-3. Launch both subagents in parallel:
-   - \`${agentPrefix}thermo-nuclear-review-subagent\`
-   - \`${agentPrefix}thermo-nuclear-code-quality-review-subagent\`
-4. Pass both agents the same labeled context:
-   - \`### Git / diff output\`
-   - \`### Changed file contents\`
-   - \`### User scope / intent\`
-5. Synthesize with findings first, deduped across reviewers. Keep the summary brief.
+If no scope is provided, review the current branch against \`main\`. Use the plugin-scoped Claude agent names \`${agentPrefix}thermo-nuclear-review-subagent\` and \`${agentPrefix}thermo-nuclear-code-quality-review-subagent\` for the matching upstream \`subagent_type\` values.
+
+Pass both agents the same labeled context sections:
+- \`### Git / diff output\`
+- \`### Changed file contents\`
+- \`### User scope / intent\`
 
 If the plugin-scoped agents are unavailable, run the same two review passes with general-purpose subagents using the rubrics embedded in this command package.`;
 }

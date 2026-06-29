@@ -45,6 +45,7 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 					name: string;
 					command: {
 						description?: string;
+						argumentHint?: string;
 						handler: (args?: string) => Promise<void> | void;
 					};
 			  }
@@ -63,20 +64,24 @@ describe("@thinkscape/pi-thermos provider detection", () => {
 
 		expect(registered?.name).toBe("thermos");
 		expect(registered?.command.description).toContain("code-quality reviews");
+		expect(registered?.command.argumentHint).toBe("[base-ref | PR URL | scope]");
 
 		await registered?.command.handler("main");
 
 		expect(messages).toHaveLength(1);
 		expect(messages[0]).toContain("Use the nico Pi subagent provider");
-		expect(messages[0]).toContain("Follow the parent workflow before launching review agents");
-		expect(messages[0]).toContain("Gather the diff and any file/context excerpts");
+		expect(messages[0]).toContain("Run the two thermo review passes as async background subagents in parallel");
+		expect(messages[0]).toContain("Launch both subagents in the same message with `run_in_background: true`");
 		expect(messages[0]).toContain('"thermo-nuclear-review-subagent"');
 	});
 
 	test("renders Thermos prompts without exposing package skills", () => {
 		const prompt = buildThermosPrompt("gotgenes", "current branch");
 		expect(prompt).toContain("Call `subagent` with");
+		expect(prompt).toContain("## Workflow");
+		expect(prompt).toContain("## Pi Provider Calls");
 		expect(prompt).toContain("replacing the placeholder sections");
+		expect(prompt).toContain("Weight overlapping findings more heavily");
 		expect(prompt).toContain("### Git / diff output");
 		expect(prompt).toContain("### Changed file contents");
 		expect(prompt).toContain("thermo-nuclear-code-quality-review-subagent");

@@ -23,7 +23,7 @@ interface PiLike {
 export default function thermosExtension(pi: PiLike = {}) {
 	pi.registerCommand?.("thermos", {
 		description: "Run deep correctness/security and strict code-quality reviews of the current branch.",
-		argumentHint: "[base ref, PR URL, or file scope]",
+		argumentHint: "[base-ref | PR URL | scope]",
 		async handler(args = "", ctx = {}) {
 			const detection = detectPiSubagentsProvider({ tools: getPiTools(pi) });
 			if (!detection.provider) {
@@ -58,16 +58,28 @@ export function buildThermosPrompt(provider: PiThermosProvider, scope: string): 
 
 ${scope}
 
-Use the ${provider} Pi subagent provider. Follow the parent workflow before launching review agents:
+Use the ${provider} Pi subagent provider.
+
+Run the two thermo review passes as async background subagents in parallel, then synthesize their results.
+
+## Workflow
 
 1. Determine the review scope from the user request, PR, current branch, or relevant changed files.
 2. Gather the diff and any file/context excerpts needed for reviewers to evaluate the change without guessing.
-3. Put the same scoped evidence into each tool call below by replacing the placeholder sections in its prompt/task:
-   - \`### Git / diff output\`
-   - \`### Changed file contents\`
-   - \`### User scope / intent\`
-4. Launch both Thermos review agents, wait for their results, then synthesize a single prioritized review with file references and evidence.
-5. If individual background summaries are already visible to the user, do not restate them wholesale. Surface the unified verdict, the highest-signal findings, and any remaining uncertainty.
+3. Launch both subagents in the same message with \`run_in_background: true\`:
+   - \`subagent_type: "thermo-nuclear-review-subagent"\` for bugs, breakages, security, devex regressions, feature-flag leaks, and other branch-audit risks.
+   - \`subagent_type: "thermo-nuclear-code-quality-review-subagent"\` for maintainability, structure, file-size growth, spaghetti, abstractions, and codebase-health risks.
+4. Pass each subagent the same scoped diff/file context and ask it to return prioritized findings with file references and evidence.
+5. After both finish, synthesize the results with findings first, deduplicated across reviewers. Weight overlapping findings more heavily, resolve disagreements with your own judgment, and keep summaries brief.
+
+If individual background summaries are already visible to the user, do not restate them wholesale. Surface the unified verdict, the highest-signal findings, and any remaining uncertainty.
+
+## Pi Provider Calls
+
+Populate the same scoped evidence into each tool call below by replacing the placeholder sections in its prompt/task:
+- \`### Git / diff output\`
+- \`### Changed file contents\`
+- \`### User scope / intent\`
 
 ${calls}`;
 }

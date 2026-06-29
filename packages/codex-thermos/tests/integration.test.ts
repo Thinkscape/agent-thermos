@@ -30,12 +30,10 @@ describe("@thinkscape/codex-thermos integration", () => {
 		expect(selectableSkills).toEqual(["thermos"]);
 		expect(skill).toContain("name: thermos");
 		expect(skill).toContain("$thermos");
-		expect(skill).toContain(
-			"`thermo-nuclear-review-subagent` for bugs, breakages, security, devex regressions, feature-flag leaks, and other branch-audit risks. Use `references/thermo-nuclear-review.md` as its rubric.",
-		);
-		expect(skill).toContain(
-			"`thermo-nuclear-code-quality-review-subagent` for maintainability, structure, file-size growth, spaghetti, abstractions, and codebase-health risks. Use `references/thermo-nuclear-code-quality-review.md` as its rubric.",
-		);
+		expect(skill).toContain("Run the two thermo review passes as async background subagents in parallel");
+		expect(skill).toContain("Launch both subagents in the same message with `run_in_background: true`");
+		expect(skill).toContain('`subagent_type: "thermo-nuclear-review-subagent"`');
+		expect(skill).toContain("The packaged rubric references are available");
 		expect(skill).not.toContain("Before launching review passes");
 		expect(existsSync(join(root, "skills/thermos/references/thermo-nuclear-review.md"))).toBe(true);
 		expect(existsSync(join(root, "skills/thermos/references/thermo-nuclear-code-quality-review.md"))).toBe(true);
