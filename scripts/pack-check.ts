@@ -1,7 +1,8 @@
-import { accessSync, existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("..", import.meta.url).pathname;
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const packages = [
 	{
@@ -38,6 +39,21 @@ const packages = [
 		required: ["package.json", "README.md", "src/providers.ts", "bin/pi-thermos.js", "assets/logo.png"],
 		forbidden: ["skills"],
 	},
+	{
+		name: "@thinkscape/deepseek-harness-thermos",
+		dir: "packages/deepseek-harness-thermos",
+		required: [
+			"package.json",
+			"README.md",
+			"assets/logo.png",
+			"bin/deepseek-harness-thermos.js",
+			"skill/thermos/SKILL.md",
+			"skill/thermos/references/deep-review-payload.md",
+			"skill/thermos/references/code-quality-payload.md",
+			"skill/thermos/scripts/thermos-validate.mjs",
+		],
+		forbidden: ["skill/thermos.md", "skill/thermos/thermos.md"],
+	},
 ];
 
 for (const pkg of packages) {
@@ -47,7 +63,9 @@ for (const pkg of packages) {
 	}
 
 	for (const file of pkg.required) {
-		accessSync(join(root, pkg.dir, file));
+		if (!existsSync(join(root, pkg.dir, file))) {
+			throw new Error(`${pkg.dir}/${file} is missing from the package`);
+		}
 	}
 
 	for (const file of pkg.forbidden) {

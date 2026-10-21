@@ -1,14 +1,16 @@
 import {
-	architectureDiagram,
 	codeQualityAgentPrompt,
 	commandDescription,
+	contextSectionLabels,
 	deepReviewAgentPrompt,
-	sharedReadmeMethodology,
+	deepseekHarnessEvidenceEnvelope,
+	deepseekHarnessParentReportingNote,
+	deepseekHarnessSkillDescription,
+	deepseekHarnessThermosWorkflow,
+	findingReportContract,
 	thermoNuclearCodeQualityRubric,
 	thermoNuclearReviewRubric,
-	thermosShortDescription,
 	thermosWorkflow,
-	upstreamCredit,
 	usageArgumentHint,
 } from "./content.ts";
 
@@ -30,6 +32,10 @@ ${thermosWorkflow}
 Use Codex subagents or multi-agent tools when available. If the current Codex surface does not expose background subagents, run the two passes sequentially in the main thread and keep the outputs clearly separated before synthesis.
 
 The packaged rubric references are available at \`references/thermo-nuclear-review.md\` and \`references/thermo-nuclear-code-quality-review.md\`. Give each subagent the matching rubric if the host does not automatically resolve the named subagent.
+
+Give each pass the finding report contract below verbatim, so both passes return the same findings block.
+
+${findingReportContract}
 `;
 }
 
@@ -53,11 +59,10 @@ ${thermosWorkflow}
 If no scope is provided, review the current branch against \`main\`. Use the plugin-scoped Claude agent names \`${agentPrefix}thermo-nuclear-review-subagent\` and \`${agentPrefix}thermo-nuclear-code-quality-review-subagent\` for the matching upstream \`subagent_type\` values.
 
 Pass both agents the same labeled context sections:
-- \`### Git / diff output\`
-- \`### Changed file contents\`
-- \`### User scope / intent\`
+${contextSectionLabels.map((label) => `- \`${label}\``).join("\n")}
 
-If the plugin-scoped agents are unavailable, run the same two review passes with general-purpose subagents using the rubrics embedded in this command package.`;
+If the plugin-scoped agents are unavailable, run the same two review passes with general-purpose subagents, and give each of them the rubric and the finding report contract from the matching agent definition in this plugin.
+`;
 }
 
 export function renderClaudeShimCommand(): string {
@@ -77,6 +82,8 @@ tools: Read, Grep, Glob, Bash
 ${deepReviewAgentPrompt}
 
 ${thermoNuclearReviewRubric}
+
+${findingReportContract}
 `;
 	}
 
@@ -91,6 +98,8 @@ tools: Read, Grep, Glob, Bash
 ${codeQualityAgentPrompt}
 
 ${thermoNuclearCodeQualityRubric}
+
+${findingReportContract}
 `;
 }
 
@@ -102,8 +111,8 @@ export function renderPiAgent(kind: "deep" | "quality", provider: "nico" | "gotg
 			: "Thermo-nuclear code-quality audit for maintainability, structure, 1k-line rule, spaghetti growth, and code-judo simplification.";
 	const body =
 		kind === "deep"
-			? `${deepReviewAgentPrompt}\n\n${thermoNuclearReviewRubric}`
-			: `${codeQualityAgentPrompt}\n\n${thermoNuclearCodeQualityRubric}`;
+			? `${deepReviewAgentPrompt}\n\n${thermoNuclearReviewRubric}\n\n${findingReportContract}`
+			: `${codeQualityAgentPrompt}\n\n${thermoNuclearCodeQualityRubric}\n\n${findingReportContract}`;
 
 	if (provider === "nico") {
 		return `---
@@ -131,62 +140,29 @@ ${body}
 `;
 }
 
-export function renderPackageReadme(host: "codex" | "claude" | "pi"): string {
-	const title =
-		host === "codex"
-			? "@thinkscape/codex-thermos"
-			: host === "claude"
-				? "@thinkscape/claude-thermos"
-				: "@thinkscape/pi-thermos";
-	const command =
-		host === "codex"
-			? "$thermos"
-			: host === "claude"
-				? "/thermos:run, or /thermos after installing the shim"
-				: "pi-thermos provider orchestration";
-	return `# ${title}
+export function renderDeepseekHarnessSkill(): string {
+	return `---
+name: thermos
+description: ${deepseekHarnessSkillDescription}
+disable-model-invocation: true
+---
 
-![Pixel-art Thermos logo](./assets/logo.png)
+${deepseekHarnessThermosWorkflow}
 
-${thermosShortDescription}
-
-${upstreamCredit}
-
-## Install
-
-${
-	host === "codex"
-		? "Install with `codex plugin marketplace add Thinkscape/agent-thermos`, then `codex plugin add thermos@agent-thermos`."
-		: ""
+${deepseekHarnessParentReportingNote}
+`;
 }
-${
-	host === "claude"
-		? "Install with `claude plugin marketplace add Thinkscape/agent-thermos`, then `claude plugin install thermos@agent-thermos`."
-		: ""
-}
-${host === "pi" ? "Install with `pi install npm:@thinkscape/pi-thermos`." : ""}
 
-## Primary invocation
+export function renderDeepseekHarnessPayload(kind: "deep" | "quality"): string {
+	const agentPrompt = kind === "deep" ? deepReviewAgentPrompt : codeQualityAgentPrompt;
+	const rubric = kind === "deep" ? thermoNuclearReviewRubric : thermoNuclearCodeQualityRubric;
 
-\`${command}\`
+	return `${deepseekHarnessEvidenceEnvelope}
 
-## Architecture
+${agentPrompt}
 
-${architectureDiagram}
+${rubric}
 
-## Methodology
-
-${sharedReadmeMethodology}
-
-## Typical usage
-
-1. Review the current branch against \`main\`.
-2. Gather the diff and changed-file context.
-3. Run both Thermos review passes.
-4. Synthesize prioritized, deduped findings.
-
-## Attribution
-
-This package adapts methodology and documentation from Cursor's MIT-licensed Thermos plugin. See the repository NOTICE for the upstream copyright notice.
+${findingReportContract}
 `;
 }
